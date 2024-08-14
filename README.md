@@ -11,6 +11,14 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 
 [2] Choisisez l'option qui vous convient:
 
+<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/main/Images/Capture%20d'%C3%A9cran%202024-08-14%20221209.png">
+
+[3] Profiter de l'annonce faite par le plugin:
+
+<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/main/Images/Capture%20d'%C3%A9cran%202024-08-14%20221248.png">
+
+<p align="center"><i>Le plugin affiche le pseudo steam du joueur afin de ne pas reveler quel personnage il joue.</i></p>
+
 # Installation
 
 # Contacte
