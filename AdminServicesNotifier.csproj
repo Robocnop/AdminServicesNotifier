@@ -38,6 +38,10 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\NovaLifeREF\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\NovaLifeREF\Mirror.dll</HintPath>
+    </Reference>
     <Reference Include="ModKit">
       <HintPath>..\..\NovaLifeREF\ModKit.dll</HintPath>
     </Reference>
