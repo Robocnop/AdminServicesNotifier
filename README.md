@@ -17,7 +17,7 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 
 <img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20211348.png">
 
-[NOUVEAU] Nouvelle Feature de Shape581 (Beta)
+[NOUVEAU] Nouvelle Feature de Shape581 (Beta) <i>Annonce + prise de service à la connexion</i>
 
 <img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20210923.png">
 
