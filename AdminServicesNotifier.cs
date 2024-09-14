@@ -13,13 +13,13 @@ public class AdminServicesNotifier : ModKit.ModKit
 {
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
-        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.1.0", "Robocnop & Shape581 (Contributor)");
+        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.0.1", "Robocnop & Shape581 (Contributor)");
     }
 
     public override void OnPluginInit()
     {
         base.OnPluginInit();
-        Debug.Log("AdminServicesNotifier est initialisé");
+        Debug.Log("AdminServicesNotifier est initialise");
         InsertMenu();
     }
 
