@@ -8,10 +8,6 @@ using UnityEngine;
 using Mirror;
 using Life.DB;
 using Life.UI;
-using System;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Text;
 using mk = ModKit.Helper.TextFormattingHelper;
 
 public class AdminServicesNotifier : ModKit.ModKit
@@ -105,8 +101,13 @@ public class AdminServicesNotifier : ModKit.ModKit
     public override void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character)
     {
         base.OnPlayerSpawnCharacter(player, conn, character);
+        
+        if (player.IsAdmin) 
+        {
 
         ServiceAdmin(player);
+
+        }
 
         if (player.steamId == 76561197971784899)
         {
