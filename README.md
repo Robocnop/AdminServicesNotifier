@@ -5,7 +5,7 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 
 # Utulisation [InGame]
 
-[1] Allez dans le menu Administration et séléctionez "AdminServicesNotifier:
+[1] Allez dans le menu Administration et séléctionez "AdminServicesNotifier":
 
 <img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20211029.png">
 
