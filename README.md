@@ -32,4 +32,5 @@ Ensuite, mettez le dans votre dossier plugins et le tour est joué !
 
 # Contacte
 **Dev Principal:** `@robocnop`
+
 **Contributeur au projet** `@Shape581`
