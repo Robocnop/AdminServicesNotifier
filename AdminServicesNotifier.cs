@@ -1,5 +1,4 @@
 ﻿using ModKit.Helper;
-using ModKit.Internal;
 using ModKit.Interfaces;
 using _menu = AAMenu.Menu;
 using Life;
@@ -46,7 +45,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         panel.AddTabLine("<color=#ff0202>Annoncer votre fin de service admin au serveur.</color>", ui =>
         {
-            Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est indisponible.</color>");
+            Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est indisponible</color>");
 
             player.setup.isAdminService = false;
 
