@@ -28,7 +28,7 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 Pour l'installer, télécharger le [.dll](https://github.com/Robocnop/AdminServicesNotifier/releases). 
 Ensuite, mettez le dans votre dossier plugins et le tour est joué !
 
-<i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases/tag/v0.0.9) avant de mettre le plugin.</i>
+<i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases) avant de mettre le plugin.</i>
 
 # Contacte
 **Dev Principal:** `@robocnop`
