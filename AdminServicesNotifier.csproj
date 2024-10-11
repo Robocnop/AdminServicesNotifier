@@ -32,7 +32,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AAMenu">
+    <Reference Include="AAMenu, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\NovaLifeREF\AAMenu.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
@@ -42,7 +43,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\NovaLifeREF\Mirror.dll</HintPath>
     </Reference>
-    <Reference Include="ModKit">
+    <Reference Include="ModKit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\NovaLifeREF\ModKit.dll</HintPath>
     </Reference>
     <Reference Include="System" />

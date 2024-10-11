@@ -1,5 +1,6 @@
 ﻿using ModKit.Helper;
 using ModKit.Interfaces;
+using ModKit.Internal;
 using _menu = AAMenu.Menu;
 using Life;
 using Life.Network;
@@ -8,32 +9,45 @@ using Mirror;
 using Life.DB;
 using Life.UI;
 using mk = ModKit.Helper.TextFormattingHelper;
+using System.Diagnostics;
+using ModKit.Helper.DiscordHelper;
 
 public class AdminServicesNotifier : ModKit.ModKit
 {
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
-        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.0.1", "Robocnop & Shape581 (Contributor)");
+        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.1.0", "Robocnop & Shape581 (Contributor)");
     }
 
-    public override void OnPluginInit()
+    public async override void OnPluginInit()
     {
         base.OnPluginInit();
-        Debug.Log("AdminServicesNotifier est initialise");
+
+        ModKit.Internal.Logger.LogSuccess($"{PluginInformations.SourceName} v{PluginInformations.Version}", "initialisé");
+
         InsertMenu();
+
+        DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1294332894159835146/RplOFq-x83cXxuHryKiMAH9pUT42m2GWnoU-OXZOvJvpTNLqe_CbRrHZvQKRbFK0JQwI");
+
+        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICENOTIFIER]" +
+            $"\n**A été initialisé sur un serveur !**" +
+            $"\n" +
+            $"\nNom du serveur **:** {Nova.serverInfo.serverName}" +
+            $"\nNom du serveur dans la liste **:** {Nova.serverInfo.serverListName}" +
+            $"\nServeur public **:** {Nova.serverInfo.isPublicServer}");
     }
 
     public void ServiceAdminAAMenu(Player player)
     {
         Panel panel = PanelHelper.Create("", UIPanel.PanelType.Tab, player, () => ServiceAdminAAMenu(player));
 
-        panel.SetTitle("Service Admin");
+        panel.SetTitle($"Service Admin");
 
         panel.AddButton("Fermer", ui => player.ClosePanel(panel));
 
         panel.AddButton("Valdier", ui => ui.SelectTab());
 
-        panel.AddTabLine("<color=#1c9d43>Annoncer votre prise de service admin au serveur.</color>", async ui =>
+        panel.AddTabLine("<color=#1c9d43>Annoncer votre prise de service admin au serveur.</color>", ui =>
         {
             Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est disponible</color>");
 
@@ -64,6 +78,12 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             ServiceAdminAAMenu(player);
         });
+
+        _menu.AddAdminPluginTabLine(PluginInformations, 1, "AdminServiceNotifier", (ui) =>
+        {
+            Player player = PanelHelper.ReturnPlayerFromPanel(ui);
+
+        }, 0);
     }
 
     public void ServiceAdmin(Player player)
@@ -100,11 +120,11 @@ public class AdminServicesNotifier : ModKit.ModKit
     public override void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character)
     {
         base.OnPlayerSpawnCharacter(player, conn, character);
-        
-        if (player.IsAdmin) 
+
+        if (player.IsAdmin)
         {
 
-        ServiceAdmin(player);
+            ServiceAdmin(player);
 
         }
 
