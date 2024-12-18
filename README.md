@@ -30,7 +30,7 @@ Ensuite, mettez le dans votre dossier plugins et le tour est joué !
 
 <i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases) avant de mettre le plugin.</i>
 
-# Contacte
+# Contact
 **Dev Principal:** `@robocnop`
 
 **Contributeur au projet:** `@Shape581`
