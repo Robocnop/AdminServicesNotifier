@@ -17,7 +17,7 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 
 <img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20211348.png">
 
-[NOUVEAU] Nouvelle Feature de Shape581 (Beta) <i>Annonce + prise de service à la connexion</i>
+[FONCTIONNE] Feature de Shape581 <i>Annonce + prise de service à la connexion</i>
 
 <img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20210923.png">
 
@@ -28,7 +28,7 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 Pour l'installer, télécharger le [.dll](https://github.com/Robocnop/AdminServicesNotifier/releases). 
 Ensuite, mettez le dans votre dossier plugins et le tour est joué !
 
-<i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases/tag/v0.0.9) avant de mettre le plugin.</i>
+<i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases) avant de mettre le plugin.</i>
 
 # Contacte
 **Dev Principal:** `@robocnop`
