@@ -33,7 +33,7 @@ Afin de modifier ceci, veuillez aller dans le fichier JSON qui a été généré
 
 true = activer | false = désactiver
 
-<i>N'oubliez pas de sauvegarder, par défaut la valeur est "true"<i>
+<i>N'oubliez pas de sauvegarder, par défaut la valeur est "true"</i>
 
 # Installation
 
