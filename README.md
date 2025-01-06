@@ -25,11 +25,11 @@ Un plugin pour Nova-Life qui permet d'annoncer quand un Admin est disponible sur
 
 # Config [Fichier JSON]
 
-<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20210923.png">
+<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202025-01-06%20200116.png">
 
 Afin de modifier ceci, veuillez aller dans le fichier JSON qui a été généré au démarrage du serveur.
 
-<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d'%C3%A9cran%202024-09-14%20210923.png">
+<img src="https://github.com/Robocnop/AdminServicesNotifier/blob/dev/Images/Capture%20d%E2%80%99%C3%A9cran%202025-01-06%20200508.png">
 
 true = activer | false = désactiver
 
