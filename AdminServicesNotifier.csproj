@@ -46,6 +46,9 @@
     <Reference Include="ModKit">
       <HintPath>..\Reference\Nova Life\ModKit.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Reference\Nova Life\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -60,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminServicesNotifier.cs" />
+    <Compile Include="config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

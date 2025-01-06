@@ -11,9 +11,13 @@ using Life.UI;
 using mk = ModKit.Helper.TextFormattingHelper;
 using System.Diagnostics;
 using ModKit.Helper.DiscordHelper;
+using System.IO;
+using System.Reflection;
 
 public class AdminServicesNotifier : ModKit.ModKit
 {
+    public Config config { get; private set; }
+
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
         PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.2.0", "Robocnop & Shape581 (Contributor)");
@@ -26,6 +30,7 @@ public class AdminServicesNotifier : ModKit.ModKit
         ModKit.Internal.Logger.LogSuccess($"{PluginInformations.SourceName} v{PluginInformations.Version}", "initialisé");
 
         InsertMenu();
+        CreateConfig();
 
         DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1294332894159835146/RplOFq-x83cXxuHryKiMAH9pUT42m2GWnoU-OXZOvJvpTNLqe_CbRrHZvQKRbFK0JQwI");
 
@@ -134,7 +139,10 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             player.SendText($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " AdminServicesNotifier ce trouve sur ce serveur.");
 
-            //Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le dévelopeur Robocnop de AdminServiceNotifier vient de ce connecter.");
+            if (config.Crédits == "true")
+            {
+                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le dévelopeur Robocnop de AdminServiceNotifier vient de ce connecter.");
+            }
 
         }
         else if (player.steamId == 76561199106186914)
@@ -143,9 +151,39 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             player.SendText($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " AdminServicesNotifier ce trouve sur ce serveur.");
 
-            //Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le collaborateur Shape581 de AdminServiceNotifier vient de ce connecter.");
+            if (config.Crédits == "true")
+            {
+                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le collaborateur Shape581 de AdminServiceNotifier vient de ce connecter.");
+            }
 
         }
 
     }
-}
+    public static string GetAssemblyName()
+    {
+        return Assembly.GetCallingAssembly().GetName().Name;
+    }
+
+    public void CreateConfig()
+    {
+        string directoryPath = pluginsPath + $"/{GetAssemblyName()}";
+        string configFilePath = directoryPath + "/config.json";
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        if (!File.Exists(configFilePath))
+        {
+            var defaultConfig = new Config
+            {
+                Crédits = "true", // true = activer, false = désactiver
+            };
+            string jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(defaultConfig, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(configFilePath, jsonContent);
+        }
+
+        config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
+    }
+}     
