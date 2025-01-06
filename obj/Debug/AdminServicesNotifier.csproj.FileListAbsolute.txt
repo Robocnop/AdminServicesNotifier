@@ -1,0 +1,13 @@
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\AdminServicesNotifier.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\AdminServicesNotifier.pdb
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\AAMenu.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\Assembly-CSharp.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\Mirror.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\ModKit.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\Newtonsoft.Json.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\bin\Debug\UnityEngine.CoreModule.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\obj\Debug\AdminServicesNotifier.csproj.AssemblyReference.cache
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\obj\Debug\AdminServicesNotifier.csproj.CoreCompileInputs.cache
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\obj\Debug\AdminSer.1E1C8C1A.Up2Date
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\obj\Debug\AdminServicesNotifier.dll
+C:\Users\roboc\Documents\GitHub\AdminServicesNotifier\obj\Debug\AdminServicesNotifier.pdb

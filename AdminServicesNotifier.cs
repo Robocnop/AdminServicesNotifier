@@ -34,7 +34,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1294332894159835146/RplOFq-x83cXxuHryKiMAH9pUT42m2GWnoU-OXZOvJvpTNLqe_CbRrHZvQKRbFK0JQwI");
 
-        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICENOTIFIER]" +
+        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
             $"\n**A été initialisé sur un serveur !**" +
             $"\n" +
             $"\nNom du serveur **:** {Nova.serverInfo.serverName}" +
@@ -84,7 +84,7 @@ public class AdminServicesNotifier : ModKit.ModKit
             ServiceAdminAAMenu(player);
         });
 
-        _menu.AddAdminPluginTabLine(PluginInformations, 1, "AdminServiceNotifier", (ui) =>
+        _menu.AddAdminPluginTabLine(PluginInformations, 1, "AdminServicesNotifier", (ui) =>
         {
             Player player = PanelHelper.ReturnPlayerFromPanel(ui);
 
@@ -141,7 +141,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             if (config.Crédits == "true")
             {
-                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le dévelopeur Robocnop de AdminServiceNotifier vient de ce connecter.");
+                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le dévelopeur Robocnop de AdminServicesNotifier vient de ce connecter.");
             }
 
         }
@@ -153,7 +153,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             if (config.Crédits == "true")
             {
-                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le collaborateur Shape581 de AdminServiceNotifier vient de ce connecter.");
+                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + "Le collaborateur Shape581 de AdminServicesNotifier vient de ce connecter.");
             }
 
         }
