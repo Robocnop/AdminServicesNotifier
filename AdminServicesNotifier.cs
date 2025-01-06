@@ -16,7 +16,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 {
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
-        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.1.0", "Robocnop & Shape581 (Contributor)");
+        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.2.0", "Robocnop & Shape581 (Contributor)");
     }
 
     public async override void OnPluginInit()
@@ -108,7 +108,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est disponible</color>");
 
-            player.setup.isAdminService = true;
+            player.SetAdminService(true);
 
             player.Notify("Succès", "Action effectuée avec succès.</color>", (NotificationManager.Type)1, 5f);
 
