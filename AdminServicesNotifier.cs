@@ -32,7 +32,7 @@ public class AdminServicesNotifier : ModKit.ModKit
         InsertMenu();
         CreateConfig();
 
-        DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1294332894159835146/RplOFq-x83cXxuHryKiMAH9pUT42m2GWnoU-OXZOvJvpTNLqe_CbRrHZvQKRbFK0JQwI");
+        DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/changeme");
 
         await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
             $"\n**A été initialisé sur un serveur !**" +
