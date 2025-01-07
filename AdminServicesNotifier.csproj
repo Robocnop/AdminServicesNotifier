@@ -62,8 +62,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminServicesNotifier.cs" />
-    <Compile Include="config.cs" />
+    <Compile Include="AdminServicesNotifier\AdminServicesNotifier.cs" />
+    <Compile Include="AdminServicesNotifier\config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
