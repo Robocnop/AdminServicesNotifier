@@ -67,4 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterCompile">
+    <Exec Command="echo Release@@Any CPU&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; (if &quot;$(PlatformName)&quot; == &quot;AnyCPU&quot; (&quot;$(ProjectDir)_Obfuscar\Obfuscar.Console.exe&quot; &quot;$(ProjectDir)_Obfuscar\obfuscar_Release_Any_CPU.xml&quot;&#xD;&#xA;xcopy /e /v &quot;$(ProjectDir)obj\Release\\Out\&quot; &quot;$(ProjectDir)obj\Release\&quot; /Y))" />
+  </Target>
 </Project>

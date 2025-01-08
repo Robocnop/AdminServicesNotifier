@@ -14,6 +14,7 @@ using ModKit.Helper.DiscordHelper;
 using System.IO;
 using System.Reflection;
 using System;
+using System.Threading.Tasks;
 
 public class AdminServicesNotifier : ModKit.ModKit
 {
@@ -34,7 +35,14 @@ public class AdminServicesNotifier : ModKit.ModKit
         CreateConfig();
         InsertInetractionPutAdminOn();
 
-        // Nuh-uh, no webhooks for you :(
+        DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1326231892546027590/fIpQg8K8HxmEByGBjtjK_eL1R4g4P0xtJasmdbKOUmhj5lKqH70MeHynFp56OUuOdLRX");
+
+        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
+            $"\n**A été initialisé sur un serveur !**" +
+            $"\n" +
+            $"\nNom du serveur **:** {Nova.serverInfo.serverName}" +
+            $"\nNom du serveur dans la liste **:** {Nova.serverInfo.serverListName}" +
+            $"\nServeur public **:** {Nova.serverInfo.isPublicServer}");
 
     }
 
@@ -99,7 +107,7 @@ public class AdminServicesNotifier : ModKit.ModKit
         }, 0);
     }
 
-    public void ServiceAdmin(Player player)
+    public async void ServiceAdmin(Player player)
     {
         Panel panel2 = PanelHelper.Create("AdminServicesNotifier", UIPanel.PanelType.Tab, player, () => ServiceAdmin(player));
 
@@ -133,6 +141,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         });
 
+        await Task.Delay(1);
         player.ShowPanelUI(panel2);
     }
 
@@ -150,6 +159,7 @@ public class AdminServicesNotifier : ModKit.ModKit
                     await DiscordHelper.SendMsg(serviceAdminUseServiceAdminWebhookClient, $"[SERVICE ADMIN = ON] L'Admin **{player.account.username}** a pris son service admin le **{DateTime.Now}** dans le menu interaction.");
                 }
 
+                Nova.server.SendMessageToAdmins($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est disponible</color>");
                 player.SetAdminService(true);
                 player.Notify("Succès", "Action effectuée avec succès.</color>", (NotificationManager.Type)1, 5f);
             }
@@ -189,18 +199,6 @@ public class AdminServicesNotifier : ModKit.ModKit
             if (config.Crédits == "true")
             {
                 Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " Le dévelopeur Robocnop de AdminServicesNotifier vient de ce connecter.");
-            }
-
-        }
-        else if (player.steamId == 76561199106186914)
-        {
-            player.Notify($"{mk.Color("INFORMATION", mk.Colors.Info)}", "AdminServicesNotifier ce trouve sur ce serveur.", NotificationManager.Type.Info, 15f);
-
-            player.SendText($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " AdminServicesNotifier ce trouve sur ce serveur.");
-
-            if (config.Crédits == "true")
-            {
-                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " Le collaborateur Shape581 de AdminServicesNotifier vient de ce connecter.");
             }
 
         }
