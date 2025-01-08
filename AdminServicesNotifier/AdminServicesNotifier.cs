@@ -37,12 +37,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1326231892546027590/fIpQg8K8HxmEByGBjtjK_eL1R4g4P0xtJasmdbKOUmhj5lKqH70MeHynFp56OUuOdLRX");
 
-        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
-            $"\n**A été initialisé sur un serveur !**" +
-            $"\n" +
-            $"\nNom du serveur **:** {Nova.serverInfo.serverName}" +
-            $"\nNom du serveur dans la liste **:** {Nova.serverInfo.serverListName}" +
-            $"\nServeur public **:** {Nova.serverInfo.isPublicServer}");
+        // Nuh-uh lol
 
     }
 
