@@ -42,6 +42,10 @@ Ensuite, mettez le dans votre dossier plugins et le tour est joué !
 
 <i>N'oubliez pas de télécharger les [dépendances](https://github.com/Aarnow/NovaLife_ModKit-Releases/releases) avant de mettre le plugin.</i>
 
+# Wiki (Documentation)
+
+[Cliquez-ici](https://github.com/Robocnop/AdminServicesNotifier/wiki/%5B0%5D-Accueil)
+
 # Contact
 **Dev Principal:** `@robocnop`
 
