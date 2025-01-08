@@ -155,7 +155,7 @@ public class AdminServicesNotifier : ModKit.ModKit
             }
             else
             {
-                player.Notify("Erreur", "Vous n'êtes pas admin.</color>", (NotificationManager.Type)1, 5f);
+                player.Notify("Erreur", "Vous n'êtes pas admin.</color>", NotificationManager.Type.Error, 5f);
             }
         });
     }
