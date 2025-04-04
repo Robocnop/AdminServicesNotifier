@@ -1,4 +1,4 @@
-﻿using ModKit.Helper;
+using ModKit.Helper;
 using ModKit.Interfaces;
 using ModKit.Internal;
 using _menu = AAMenu.Menu;
@@ -18,11 +18,11 @@ using System.Threading.Tasks;
 
 public class AdminServicesNotifier : ModKit.ModKit
 {
-    public Config config { get; private set; }
+    public Config Config { get; private set; }
 
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
-        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.3.0", "Robocnop & Shape581 (Contributor)");
+        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.3.3", "Robocnop & Shape581 (Contributor)");
     }
 
     public async override void OnPluginInit()
@@ -35,9 +35,19 @@ public class AdminServicesNotifier : ModKit.ModKit
         CreateConfig();
         InsertInetractionPutAdminOn();
 
-        DiscordWebhookClient WebhookClient = new DiscordWebhookClient("https://discord.com/api/webhooks/1326231892546027590/fIpQg8K8HxmEByGBjtjK_eL1R4g4P0xtJasmdbKOUmhj5lKqH70MeHynFp56OUuOdLRX");
+        DiscordWebhookClient // nuh uh
 
-        // Nuh-uh lol
+        string creditsStatus = Config.Crédits.ToLower() == "true" ? "activés" : "désactivés";
+
+        await DiscordHelper.SendMsg(WebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
+            $"\n**A été initialisé sur un serveur !**" +
+            $"\n" +
+            $"\nNom du serveur **:** {Nova.serverInfo.serverName}" +
+            $"\nNom du serveur dans la liste **:** {Nova.serverInfo.serverListName}" +
+            $"\nServeur public **:** {Nova.serverInfo.isPublicServer}" +
+            $"\nVersion du plugin **:** {PluginInformations.Version}" +
+            $"\nCrédits **:** {creditsStatus}");
+
 
     }
 
@@ -53,31 +63,30 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         panel.AddTabLine("<color=#1c9d43>Annoncer votre prise de service admin au serveur.</color>", ui =>
         {
-            if (!string.IsNullOrEmpty(config.AdminUseServiceAdminWebhookUrl))
+            if (!string.IsNullOrEmpty(Config.AdminUseServiceAdminWebhookUrl))
             {
-                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(config.AdminUseServiceAdminWebhookUrl);
+                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(Config.AdminUseServiceAdminWebhookUrl);
                 DiscordHelper.SendMsg(serviceAdminUseServiceAdminWebhookClient, $"[SERVICE ADMIN = ON] L'Admin **{player.account.username}** a pris son service admin le **{DateTime.Now}** en utilisant le panel de AdminServicesNotifier.");
             }
 
             Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est disponible</color>");
 
-            player.setup.isAdminService = true;
-
+            player.IsAdminService = true;
             player.Notify("Succès", "Action effectuée avec succès.</color>", (NotificationManager.Type)1, 5f);
 
         });
 
         panel.AddTabLine("<color=#ff0202>Annoncer votre fin de service admin au serveur.</color>", ui =>
         {
-            if (!string.IsNullOrEmpty(config.AdminUseServiceAdminWebhookUrl))
+            if (!string.IsNullOrEmpty(Config.AdminUseServiceAdminWebhookUrl))
             {
-                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(config.AdminUseServiceAdminWebhookUrl);
+                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(Config.AdminUseServiceAdminWebhookUrl);
                 DiscordHelper.SendMsg(serviceAdminUseServiceAdminWebhookClient, $"[SERVICE ADMIN = OFF] L'Admin **{player.account.username}** a a arrêté son service admin le **{DateTime.Now}** en utilisant le panel de AdminServicesNotifier.");
             }
 
             Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est indisponible</color>");
 
-            player.setup.isAdminService = false;
+            player.IsAdminService = false;
 
             player.Notify("Succès", "Action effectuée avec succès.</color>", (NotificationManager.Type)1, 5f);
 
@@ -128,9 +137,9 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             player.Notify("Succès", "Action effectuée avec succès.</color>", (NotificationManager.Type)1, 5f);
 
-            if (!string.IsNullOrEmpty(config.AdminUseServiceAdminWebhookUrl))
+            if (!string.IsNullOrEmpty(Config.AdminUseServiceAdminWebhookUrl))
             {
-                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(config.AdminUseServiceAdminWebhookUrl);
+                DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(Config.AdminUseServiceAdminWebhookUrl);
                 await DiscordHelper.SendMsg(serviceAdminUseServiceAdminWebhookClient, $"[SERVICE ADMIN = ON] L'Admin **{player.account.username}** a pris son service admin le **{DateTime.Now}** en ce connectant sur le serveur.");
             }
 
@@ -148,9 +157,9 @@ public class AdminServicesNotifier : ModKit.ModKit
 
             if (player.IsAdmin)
             {
-                if (!string.IsNullOrEmpty(config.AdminUseServiceAdminWebhookUrl))
+                if (!string.IsNullOrEmpty(Config.AdminUseServiceAdminWebhookUrl))
                 {
-                    DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(config.AdminUseServiceAdminWebhookUrl);
+                    DiscordWebhookClient serviceAdminUseServiceAdminWebhookClient = new DiscordWebhookClient(Config.AdminUseServiceAdminWebhookUrl);
                     await DiscordHelper.SendMsg(serviceAdminUseServiceAdminWebhookClient, $"[SERVICE ADMIN = ON] L'Admin **{player.account.username}** a pris son service admin le **{DateTime.Now}** dans le menu interaction.");
                 }
 
@@ -173,9 +182,9 @@ public class AdminServicesNotifier : ModKit.ModKit
         {
 
             ServiceAdmin(player);
-            if (!string.IsNullOrEmpty(config.AdminLoginWebhookUrl))
+            if (!string.IsNullOrEmpty(Config.AdminLoginWebhookUrl))
             {
-                DiscordWebhookClient adminLoginWebhookClient = new DiscordWebhookClient(config.AdminLoginWebhookUrl);
+                DiscordWebhookClient adminLoginWebhookClient = new DiscordWebhookClient(Config.AdminLoginWebhookUrl);
                 DiscordHelper.SendMsg(adminLoginWebhookClient, $"# [ADMINSERVICESNOTIFIER]" +
                      $"\n**Un admin s'est connecté au serveur !**" +
                      $"\nL'Admin **{player.account.username}** s'est connecté au serveur." +
@@ -187,13 +196,13 @@ public class AdminServicesNotifier : ModKit.ModKit
 
         if (player.steamId == 76561197971784899)
         {
-            player.Notify($"{mk.Color("INFORMATION", mk.Colors.Info)}", "AdminServicesNotifier ce trouve sur ce serveur.", NotificationManager.Type.Info, 15f);
+            player.Notify($"{mk.Color("INFORMATION", mk.Colors.Info)}", "AdminServicesNotifier se trouve sur ce serveur.", NotificationManager.Type.Info, 15f);
 
-            player.SendText($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " AdminServicesNotifier ce trouve sur ce serveur.");
+            player.SendText($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " AdminServicesNotifier se trouve sur ce serveur.");
 
-            if (config.Crédits == "true")
+            if (Config.Crédits == "true")
             {
-                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " Le dévelopeur Robocnop de AdminServicesNotifier vient de ce connecter.");
+                Nova.server.SendMessageToAdmins($"{mk.Color("[INFORMATION]", mk.Colors.Info)}" + " Le développeur Robocnop de AdminServicesNotifier vient de se connecter.");
             }
 
         }
@@ -226,7 +235,7 @@ public class AdminServicesNotifier : ModKit.ModKit
             File.WriteAllText(configFilePath, jsonContent);
         }
 
-        config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
+        Config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
     }
 
 }
