@@ -9,4 +9,4 @@ Toute la documentation sur le plugin ce trouve [ICI](https://github.com/Robocnop
 # Contact
 **Dev Principal:** `@robocnop`
 
-**Contributeur au projet:** `@Shape581`
+**Contributeur au projet:** `@Shape581`, `@Bankokwak`
