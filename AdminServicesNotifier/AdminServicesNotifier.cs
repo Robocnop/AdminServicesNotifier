@@ -22,7 +22,7 @@ public class AdminServicesNotifier : ModKit.ModKit
 
     public AdminServicesNotifier(IGameAPI api) : base(api)
     {
-        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.3.3", "Robocnop & Shape581 (Contributor)");
+        PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "1.3.4", "Robocnop & Shape581 (Contributor)");
     }
 
     public async override void OnPluginInit()
@@ -35,7 +35,7 @@ public class AdminServicesNotifier : ModKit.ModKit
         CreateConfig();
         InsertInetractionPutAdminOn();
 
-        DiscordWebhookClient // nuh uh
+        DiscordWebhookClient // Nuh uh 
 
         string creditsStatus = Config.Crédits.ToLower() == "true" ? "activés" : "désactivés";
 
@@ -177,7 +177,7 @@ public class AdminServicesNotifier : ModKit.ModKit
     public override void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character)
     {
         base.OnPlayerSpawnCharacter(player, conn, character);
-
+        if (player == null) return; 
         if (player.IsAdmin)
         {
 
