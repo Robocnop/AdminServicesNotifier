@@ -1,8 +1,9 @@
-﻿public class Config
+﻿namespace ASN
 {
-    public string Crédits;
-    public string AdminLoginWebhookUrl;
-    public string AdminUseServiceAdminWebhookUrl;
-
-
+    public class Config
+    {
+        public string AdminLoginWebhookUrl = "URL_ICI";
+        public string AdminUseServiceAdminWebhookUrl = "URL_ICI";
+        public bool AllowPlayerToSeeAdmin = true;
+    }
 }
