@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Life;
 using Life.DB;
 using Life.UI;
 using Life.Network;
-using Life.Network.Systems;
 using Mirror;
 using ModKit.Helper;
 using ModKit.Interfaces;
@@ -21,176 +19,398 @@ namespace ASN
         public Config Config { get; private set; }
         private Dictionary<int, DateTime> _serviceSessions = new Dictionary<int, DateTime>();
         private Dictionary<int, bool> _confirmedStates = new Dictionary<int, bool>();
+        private Dictionary<int, bool> _silentMode = new Dictionary<int, bool>();
         private List<int> _isPanelActive = new List<int>();
+        private bool _isRunning = false;
 
         public AdminServicesNotifier(IGameAPI api) : base(api)
         {
-            PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "2.0.0", "Robocnop");
+            PluginInformations = new PluginInformations(AssemblyHelper.GetName(), "2.1.0", "Robocnop");
         }
 
         public override void OnPluginInit()
         {
             base.OnPluginInit();
-            ModKit.Internal.Logger.LogSuccess($"{PluginInformations.SourceName} v{PluginInformations.Version}", "initialisé");
+            Logger.LogSuccess("ASN - Demarrage", $"v{PluginInformations.Version} initialise");
             
             Config = ASNConfigHandler.LoadConfig(pluginsPath);
 
             InsertMenu();
             InsertInteractionPutAdminOn();
 
-            // --- COMMANDES ---
             new SChatCommand("/a", "Voir les admins en service", "/a", (player, args) => 
             {
                 if (Config.AllowPlayerToSeeAdmin || player.IsAdmin)
                 {
                     List<string> adminsOnDuty = new List<string>();
                     foreach (Player p in Nova.server.GetAllPlayers())
-                        if (p.IsAdminService) adminsOnDuty.Add(p.account.username);
+                    {
+                        if (p != null && p.IsAdminService && p.setup?.character != null)
+                        {
+                            int id = p.setup.character.Id;
+                            bool isSilent = _silentMode.ContainsKey(id) && _silentMode[id];
+                            
+                            if (!isSilent)
+                                adminsOnDuty.Add(p.account.username);
+                        }
+                    }
 
-                    string msg = adminsOnDuty.Count > 0 ? $"Admins en service : {string.Join(", ", adminsOnDuty)}" : "Aucun admin en service.";
+                    string msg = adminsOnDuty.Count > 0 
+                        ? $"Admins en service : {string.Join(", ", adminsOnDuty)}" 
+                        : "Aucun admin en service.";
+                    
                     player.SendText($"<color=#1c9d43>[STAFF]</color> {msg}");
                 }
-                else player.Notify("Erreur", "Permission insuffisante.", NotificationManager.Type.Error);
+                else 
+                {
+                    player.Notify("Erreur", "Permission insuffisante.", NotificationManager.Type.Error);
+                }
             }).Register();
 
-            new SChatCommand("/sa", "Prise ou fin de service admin", "/sa", (player, args) => {
-                if (player.IsAdmin) ConfirmServiceToggle(player);
+            new SChatCommand("/sa", "Prise ou fin de service admin", "/sa", (player, args) => 
+            {
+                if (player.IsAdmin) 
+                    ConfirmServiceToggle(player);
+                else
+                    player.Notify("Erreur", "Commande reservee aux admins.", NotificationManager.Type.Error);
             }).Register();
 
-            CheckBypassLoop();
+            StartWatchdog();
         }
 
-        // watchdog : Vérifie chaque seconde si un admin a forcé son service
-        private async void CheckBypassLoop()
+        private async void StartWatchdog()
         {
-            while (true)
+            if (_isRunning) return;
+            _isRunning = true;
+
+            while (_isRunning)
             {
-                await Task.Delay(1000);
-                foreach (Player p in Nova.server.GetAllPlayers())
+                await Task.Delay(5000);
+                
+                try
                 {
-                    if (p == null || !p.IsAdmin || p.setup?.character == null) continue;
-                    int id = p.setup.character.Id;
-                    bool confirmed = _confirmedStates.ContainsKey(id) && _confirmedStates[id];
-                    
-                    if (p.IsAdminService != confirmed && !_isPanelActive.Contains(id))
+                    foreach (Player p in Nova.server.GetAllPlayers())
                     {
-                        p.IsAdminService = confirmed;
-                        ConfirmServiceToggle(p);
+                        if (p == null || !p.IsAdmin || p.setup?.character == null) 
+                            continue;
+
+                        int id = p.setup.character.Id;
+                        bool confirmed = _confirmedStates.ContainsKey(id) && _confirmedStates[id];
+                        
+                        if (p.IsAdminService != confirmed && !_isPanelActive.Contains(id))
+                        {
+                            await Task.Delay(1000);
+                            
+                            if (p.IsAdminService != confirmed && !_isPanelActive.Contains(id))
+                            {
+                                p.IsAdminService = confirmed;
+                                Logger.LogWarning("ASN - Watchdog", $"Bypass detecte pour {p.account.username}");
+                                ConfirmServiceToggle(p);
+                            }
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError($"ASN - Watchdog Error: {ex.Message}", "ASN");
                 }
             }
         }
 
-        // disconnect : Gère la sortie propre des logs (broken pour l'instant need un fix)
         public override void OnPlayerDisconnect(NetworkConnection conn)
         {
             base.OnPlayerDisconnect(conn);
-            Player player = Nova.server.GetPlayer(conn);
-
-            if (player?.IsAdmin == true && player.IsAdminService && player.setup?.character != null)
+            
+            try
             {
-                int id = player.setup.character.Id;
-                _confirmedStates[id] = false;
-                string duration = StopTrackingAndGetDuration(player);
-                _ = SendEmbedLog(Config.AdminUseServiceAdminWebhookUrl, "#e67e22", "🟠 DÉCONNEXION EN SERVICE", player, duration);
+                Player player = Nova.server.GetPlayer(conn);
+
+                if (player?.IsAdmin == true && player.setup?.character != null)
+                {
+                    int id = player.setup.character.Id;
+
+                    if (player.IsAdminService && _confirmedStates.ContainsKey(id) && _confirmedStates[id])
+                    {
+                        bool wasSilent = _silentMode.ContainsKey(id) && _silentMode[id];
+                        _confirmedStates[id] = false;
+                        string duration = StopTrackingAndGetDuration(player);
+                        
+                        _ = SendEmbedLog(
+                            Config.AdminUseServiceAdminWebhookUrl, 
+                            "#e67e22", 
+                            "🟠 DECONNEXION EN SERVICE", 
+                            player, 
+                            duration,
+                            wasSilent
+                        );
+                    }
+
+                    _confirmedStates.Remove(id);
+                    _serviceSessions.Remove(id);
+                    _silentMode.Remove(id);
+                    _isPanelActive.Remove(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"ASN - OnPlayerDisconnect Error: {ex.Message}", "ASN");
             }
         }
 
-        // panel : La fenêtre UI de confirmation (Oui/Non)
         public void ConfirmServiceToggle(Player player)
         {
-            if (player.setup?.character == null) return;
+            if (player?.setup?.character == null) return;
+
             int id = player.setup.character.Id;
             if (_isPanelActive.Contains(id)) return;
             _isPanelActive.Add(id);
 
             bool isInService = player.IsAdminService;
-            Panel panel = PanelHelper.Create(isInService ? "Quitter le service ?" : "Prendre le service ?", UIPanel.PanelType.Tab, player, () => ConfirmServiceToggle(player));
             
-            panel.AddButton("Fermer", ui => { _isPanelActive.Remove(id); player.ClosePanel(panel); });
-            panel.AddButton("Valider", ui => ui.SelectTab());
-
-            panel.AddTabLine("Non", ui => { 
+            Panel panel = PanelHelper.Create(
+                isInService ? "Quitter le service ?" : "Prendre le service ?", 
+                UIPanel.PanelType.Tab, 
+                player, 
+                () => ConfirmServiceToggle(player)
+            );
+            
+            panel.AddButton("Fermer", ui => 
+            { 
                 _isPanelActive.Remove(id); 
                 player.ClosePanel(panel); 
             });
 
-            panel.AddTabLine("Oui", async ui =>
-            {
-                _isPanelActive.Remove(id);
-                player.ClosePanel(panel);
-                if (!isInService)
-                {
-                    _confirmedStates[id] = true;
-                    player.IsAdminService = true;
-                    StartTracking(player);
-                    await SendEmbedLog(Config.AdminUseServiceAdminWebhookUrl, "#2ecc71", "🟢 PRISE DE SERVICE", player);
-                    Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est disponible</color>");
-                }
-                else
-                {
-                    _confirmedStates[id] = false;
-                    player.IsAdminService = false;
-                    string duration = StopTrackingAndGetDuration(player);
-                    await SendEmbedLog(Config.AdminUseServiceAdminWebhookUrl, "#e74c3c", "🔴 FIN DE SERVICE", player, duration);
-                    Nova.server.SendMessageToAll($"<color=#ff0202>[Serveur] <color=#ffffff>L'Admin {player.account.username} est indisponible</color>");
-                }
+            panel.AddButton("Valider", ui => ui.SelectTab());
+
+            panel.AddTabLine("Non", ui => 
+            { 
+                _isPanelActive.Remove(id); 
+                player.ClosePanel(panel); 
             });
+
+            if (!isInService)
+            {
+                panel.AddTabLine("Oui (Visible)", async ui =>
+                {
+                    await HandleServiceToggle(player, id, panel, false);
+                });
+
+                panel.AddTabLine("Oui (Mode Silent)", async ui =>
+                {
+                    await HandleServiceToggle(player, id, panel, true);
+                });
+            }
+            else
+            {
+                panel.AddTabLine("Oui", async ui =>
+                {
+                    await HandleServiceToggle(player, id, panel, false);
+                });
+            }
+
             player.ShowPanelUI(panel);
         }
 
-        // embeds : Système d'envoi DiscordHelper
-        private async Task SendEmbedLog(string url, string hexColor, string title, Player player, string duration = null)
+        private async Task HandleServiceToggle(Player player, int id, Panel panel, bool silent)
         {
-            if (string.IsNullOrEmpty(url) || url == "URL_ICI") return;
-            DiscordWebhookClient client = new DiscordWebhookClient(url);
+            _isPanelActive.Remove(id);
+            player.ClosePanel(panel);
 
-            string steamId = player.account.steamId.ToString();
-            string rpName = (player.setup?.character != null) ? $"{player.setup.character.Firstname} {player.setup.character.Lastname}" : "Inconnu";
-
-            List<string> fieldNames = new List<string> { "🎭 Nom RP", "🆔 ID Perso", "👤 Compte", "🎮 Nom Steam", "💾 SteamID", "🔗 Profil" };
-            List<string> fieldValues = new List<string> { rpName, player.setup.character.Id.ToString(), player.account.username, player.steamUsername, steamId, $"[Cliquez ici](https://steamcommunity.com/profiles/{steamId})" };
-
-            if (!string.IsNullOrEmpty(duration))
+            try
             {
-                fieldNames.Add("⏳ Durée du service");
-                fieldValues.Add($"**{duration}**");
-            }
+                bool isInService = player.IsAdminService;
 
-            await DiscordHelper.SendEmbed(client, hexColor, title, "Log AdminServicesNotifier v2.0.0", fieldNames, fieldValues, false, true, $"Fait par Robocnop • {DateTime.Now:HH:mm}");
+                if (!isInService)
+                {
+                    player.IsAdminService = true;
+                    _confirmedStates[id] = true;
+                    _silentMode[id] = silent;
+                    StartTracking(player);
+                    
+                    await SendEmbedLog(
+                        Config.AdminUseServiceAdminWebhookUrl, 
+                        silent ? "#9b59b6" : "#2ecc71", 
+                        silent ? "🟣 PRISE DE SERVICE (SILENT)" : "🟢 PRISE DE SERVICE", 
+                        player,
+                        null,
+                        silent
+                    );
+                    
+                    if (!silent)
+                    {
+                        Nova.server.SendMessageToAll(
+                            $"<color=#ff0202>[Serveur]</color> <color=#ffffff>L'Admin {player.account.username} est disponible</color>"
+                        );
+                    }
+                    
+                    Logger.LogSuccess("ASN - Service", $"{player.account.username} en service {(silent ? "(SILENT)" : "")}");
+                }
+                else
+                {
+                    bool wasSilent = _silentMode.ContainsKey(id) && _silentMode[id];
+                    player.IsAdminService = false;
+                    _confirmedStates[id] = false;
+                    _silentMode[id] = false;
+                    string duration = StopTrackingAndGetDuration(player);
+                    
+                    await SendEmbedLog(
+                        Config.AdminUseServiceAdminWebhookUrl, 
+                        "#e74c3c", 
+                        "🔴 FIN DE SERVICE", 
+                        player, 
+                        duration,
+                        wasSilent
+                    );
+                    
+                    if (!wasSilent)
+                    {
+                        Nova.server.SendMessageToAll(
+                            $"<color=#ff0202>[Serveur]</color> <color=#ffffff>L'Admin {player.account.username} est indisponible</color>"
+                        );
+                    }
+                    
+                    Logger.LogSuccess("ASN - Service", $"{player.account.username} hors service ({duration}) {(wasSilent ? "[ETAIT SILENT]" : "")}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"ASN - HandleServiceToggle Error: {ex.Message}", "ASN");
+                player.Notify("Erreur", "Erreur lors du changement de service.", NotificationManager.Type.Error);
+            }
         }
 
-        // tracking : Gestion du temps de service
-        private void StartTracking(Player player) { if (player.setup?.character != null) _serviceSessions[player.setup.character.Id] = DateTime.Now; }
-        private string StopTrackingAndGetDuration(Player player) {
-            if (player.setup?.character != null && _serviceSessions.ContainsKey(player.setup.character.Id)) {
-                TimeSpan d = DateTime.Now - _serviceSessions[player.setup.character.Id];
+        private async Task SendEmbedLog(string url, string hexColor, string title, Player player, string duration = null, bool isSilent = false)
+        {
+            if (string.IsNullOrEmpty(url) || url == "URL_ICI") return;
+
+            try
+            {
+                DiscordWebhookClient client = new DiscordWebhookClient(url);
+
+                string steamId = player.account.steamId.ToString();
+                string rpName = (player.setup?.character != null) 
+                    ? $"{player.setup.character.Firstname} {player.setup.character.Lastname}" 
+                    : "Inconnu";
+
+                List<string> fieldNames = new List<string> 
+                { 
+                    "🎭 Nom RP", 
+                    "🆔 ID Perso", 
+                    "💤 Compte", 
+                    "🎮 Nom Steam", 
+                    "💾 SteamID", 
+                    "🔗 Profil" 
+                };
+
+                List<string> fieldValues = new List<string> 
+                { 
+                    rpName, 
+                    player.setup.character.Id.ToString(), 
+                    player.account.username, 
+                    player.steamUsername, 
+                    steamId, 
+                    $"[Cliquez ici](https://steamcommunity.com/profiles/{steamId})" 
+                };
+
+                if (isSilent)
+                {
+                    fieldNames.Add("🕵️ Mode");
+                    fieldValues.Add("**SILENT** (Invisible aux joueurs)");
+                }
+
+                if (!string.IsNullOrEmpty(duration))
+                {
+                    fieldNames.Add("⏳ Duree du service");
+                    fieldValues.Add($"**{duration}**");
+                }
+
+                await DiscordHelper.SendEmbed(
+                    client, 
+                    hexColor, 
+                    title, 
+                    "Log AdminServicesNotifier v2.1.0", 
+                    fieldNames, 
+                    fieldValues, 
+                    false, 
+                    true, 
+                    $"Fait par Robocnop • {DateTime.Now:HH:mm}"
+                );
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"ASN - Discord Webhook Error: {ex.Message}", "ASN");
+            }
+        }
+
+        private void StartTracking(Player player)
+        {
+            if (player?.setup?.character != null)
+            {
+                _serviceSessions[player.setup.character.Id] = DateTime.Now;
+            }
+        }
+
+        private string StopTrackingAndGetDuration(Player player)
+        {
+            if (player?.setup?.character != null && _serviceSessions.ContainsKey(player.setup.character.Id))
+            {
+                TimeSpan duration = DateTime.Now - _serviceSessions[player.setup.character.Id];
                 _serviceSessions.Remove(player.setup.character.Id);
-                return $"{d.Hours}h {d.Minutes}m {d.Seconds}s";
+                return $"{duration.Hours}h {duration.Minutes}m {duration.Seconds}s";
             }
             return "Inconnu";
         }
 
-        // menus & interaction
-        public void InsertMenu() {
-            _menu.AddAdminTabLine(PluginInformations, 1, "AdminServicesNotifier", (ui) => ConfirmServiceToggle(PanelHelper.ReturnPlayerFromPanel(ui)));
-            _menu.AddAdminPluginTabLine(PluginInformations, 1, "AdminServicesNotifier", (ui) => ConfirmServiceToggle(PanelHelper.ReturnPlayerFromPanel(ui)), 0);
+        public void InsertMenu()
+        {
+            _menu.AddAdminTabLine(
+                PluginInformations, 
+                1, 
+                "AdminServicesNotifier", 
+                (ui) => ConfirmServiceToggle(PanelHelper.ReturnPlayerFromPanel(ui))
+            );
+
+            _menu.AddAdminPluginTabLine(
+                PluginInformations, 
+                1, 
+                "AdminServicesNotifier", 
+                (ui) => ConfirmServiceToggle(PanelHelper.ReturnPlayerFromPanel(ui)), 
+                0
+            );
         }
 
-        public void InsertInteractionPutAdminOn() {
-            _menu.AddInteractionTabLine(PluginInformations, "Gestion du service admin", (ui) => {
+        public void InsertInteractionPutAdminOn()
+        {
+            _menu.AddInteractionTabLine(PluginInformations, "Gestion du service admin", (ui) => 
+            {
                 Player p = PanelHelper.ReturnPlayerFromPanel(ui);
-                if (p.IsAdmin) ConfirmServiceToggle(p);
+                if (p?.IsAdmin == true) 
+                    ConfirmServiceToggle(p);
             });
         }
 
-        // spawn : Affiche le panel de service dès que l'admin arrive
-        public override async void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character) {
+        public override async void OnPlayerSpawnCharacter(Player player, NetworkConnection conn, Characters character)
+        {
             base.OnPlayerSpawnCharacter(player, conn, character);
-            if (player?.IsAdmin == true) {
-                if (player.setup?.character != null) _confirmedStates[player.setup.character.Id] = false;
-                ConfirmServiceToggle(player); // C'est ici que le panel s'ouvre au spawn
-                await SendEmbedLog(Config.AdminLoginWebhookUrl, "#3498db", "🔵 CONNEXION ADMIN", player);
+
+            if (player?.IsAdmin == true && player.setup?.character != null)
+            {
+                int id = player.setup.character.Id;
+                _confirmedStates[id] = false;
+                _silentMode[id] = false;
+
+                await Task.Delay(3000);
+
+                if (player.setup?.character != null)
+                {
+                    ConfirmServiceToggle(player);
+                    await SendEmbedLog(
+                        Config.AdminLoginWebhookUrl, 
+                        "#3498db", 
+                        "🔵 CONNEXION ADMIN", 
+                        player
+                    );
+                }
             }
         }
     }
