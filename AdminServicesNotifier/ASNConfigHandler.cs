@@ -18,7 +18,7 @@ namespace ASN
             return Path.Combine(directoryPath, "config.json");
         }
 
-        public static Config LoadConfig(string basePluginsPath)
+        public static Config LoadConfig(string basePluginsPath, string pluginVersion)
         {
             string filePath = GetConfigPath(basePluginsPath);
             Config config = new Config();
@@ -29,16 +29,29 @@ namespace ASN
                 {
                     string existingJson = File.ReadAllText(filePath);
                     JsonConvert.PopulateObject(existingJson, config);
-                    Logger.LogSuccess("ASN - Config", "Configuration chargee");
+
+                    if (config.ConfigVersion != pluginVersion)
+                    {
+                        // La reecriture ci-dessous ajoute les champs manquants en conservant les valeurs existantes
+                        string oldVersion = string.IsNullOrEmpty(config.ConfigVersion) ? "inconnue" : config.ConfigVersion;
+                        Logger.LogWarning("ASN - Config", $"Config mise a jour : {oldVersion} -> {pluginVersion} (nouveaux champs ajoutes, valeurs conservees).");
+                        config.ConfigVersion = pluginVersion;
+                    }
+                    else
+                    {
+                        Logger.LogSuccess("ASN - Config", "Configuration chargee");
+                    }
                 }
                 else
                 {
+                    config.ConfigVersion = pluginVersion;
                     Logger.LogWarning("ASN - Config", "Fichier config.json cree ! Configurez les webhooks Discord.");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError($"ASN - LoadConfig Error: {ex.Message}", "ASN");
+                Logger.LogError("ASN - Config", $"LoadConfig: {ex.Message}");
+                config.ConfigVersion = pluginVersion;
             }
 
             SaveConfig(config, basePluginsPath);
@@ -55,7 +68,7 @@ namespace ASN
             }
             catch (Exception ex)
             {
-                Logger.LogError($"ASN - SaveConfig Error: {ex.Message}", "ASN");
+                Logger.LogError("ASN - Config", $"SaveConfig: {ex.Message}");
             }
         }
     }

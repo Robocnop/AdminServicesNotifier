@@ -1,0 +1,50 @@
+# --- Claude / outils IA ---
+.claude/
+.claude*
+CLAUDE.md
+CLAUDE.local.md
+
+# --- Sorties de build ---
+bin/
+obj/
+[Bb]uild/
+[Oo]ut/
+*.dll
+*.pdb
+*.exe
+
+# --- Visual Studio ---
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsp
+*.vspx
+*.sap
+
+# --- Rider / VS Code ---
+.idea/
+.vscode/
+*.DotSettings.user
+
+# --- Obfuscar (binaires et sorties, on garde la config .xml) ---
+_Obfuscar/*.exe
+_Obfuscar/Out/
+_Obfuscar/Mapping.txt
+
+# --- NuGet ---
+packages/
+*.nupkg
+project.lock.json
+
+# --- Fichiers temporaires / OS ---
+*.tmp
+*.log
+*.cache
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# --- Config locale avec secrets (webhooks Discord) ---
+config.json
