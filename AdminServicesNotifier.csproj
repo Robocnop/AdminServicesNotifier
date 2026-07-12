@@ -14,7 +14,6 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <!-- Chemins des assemblies de reference : un seul endroit a modifier -->
   <PropertyGroup>
     <NovaCleanAssemblies>C:\Users\roboc\Documents\GitHub\NovaLifeCleaned\NovaLife-Clean-Assemblies\cleaned-2026-07-04</NovaCleanAssemblies>
     <NovaManaged>D:\SteamLibrary\steamapps\common\Nova-Life\Nova-Life_Data\Managed</NovaManaged>
